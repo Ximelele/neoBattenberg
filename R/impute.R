@@ -277,7 +277,7 @@ run.beagle5 = function(beaglejar,
                   " window=",window,
                   " overlap=",overlap,
                   " impute=false")
-    EXIT_CODE=system(cmd, wait=T)
+    EXIT_CODE <- system(cmd, wait=T)
     stopifnot(EXIT_CODE==0)
 }
 
@@ -320,25 +320,25 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                            beaglenthreads=1,
                            beaglewindow=40,
                            beagleoverlap=4,
-			   javajre="java")
+			   javajre="java",genomeBuild="hg19")
 {
   
   previoushaplotypefile <- list.files(pattern = paste0("_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))[1]
   if (use_previous_imputation & !is.na(previoushaplotypefile)) {
     
     print(paste0("Previous imputation results found, copying info from", previoushaplotypefile, " to flip alleles"))
-    currenthaplotypefile <- paste(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt", sep="")
+    currenthaplotypefile <- paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
     if (previoushaplotypefile != currenthaplotypefile) {
-      file.copy(from = previoushaplotypefile, to = paste(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt", sep=""))
+      file.copy(from = previoushaplotypefile, to = paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))
     }
     
   } else {
     
-    if (file.exists(paste(tumourname, "_alleleFrequencies_chr", chrom, ".txt", sep=""))) {
+    if (file.exists(paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"))) {
       generate.impute.input.wgs(chrom=chrom,
-                                tumour.allele.counts.file=paste(tumourname,"_alleleFrequencies_chr", chrom, ".txt", sep=""),
-                                normal.allele.counts.file=paste(normalname,"_alleleFrequencies_chr", chrom, ".txt", sep=""),
-                                output.file=paste(tumourname, "_impute_input_chr", chrom, ".txt", sep=""),
+                                tumour.allele.counts.file= paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
+                                normal.allele.counts.file= paste0(normalname, "_alleleFrequencies_chr", chrom, ".txt"),
+                                output.file= paste0(tumourname, "_impute_input_chr", chrom, ".txt"),
                                 imputeinfofile=imputeinfofile,
                                 is.male=ismale,
                                 problemLociFile=problemloci,
@@ -358,14 +358,12 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
     
     if(usebeagle){
       ## Convert input files for beagle5
-      imputeinputfile <- paste(tumourname,
-                               "_impute_input_chr",
-                               chrom, ".txt", sep="")
+      imputeinputfile <- paste0(tumourname, "_impute_input_chr", chrom, ".txt")
       vcfbeagle <- convert.impute.input.to.beagle.input(imputeinput=imputeinputfile,
                                                         chrom=chrom)
-      vcfbeagle_path <- paste(tumourname,"_beagle5_input_chr",chrom,".txt",sep="")
-      outbeagle_path <- paste(tumourname,"_beagle5_output_chr",chrom,".txt",sep="")
-      writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path)
+      vcfbeagle_path <- paste0(tumourname, "_beagle5_input_chr", chrom, ".txt")
+      outbeagle_path <- paste0(tumourname, "_beagle5_output_chr", chrom, ".txt")
+      writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path,genomereference = genomeBuild)
       ## Run beagle5 on the files
       run.beagle5(beaglejar=beaglejar,
                   vcfpath=vcfbeagle_path,
@@ -377,10 +375,8 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                   window=beaglewindow,
                   overlap=beagleoverlap,
                   javajre=javajre)
-      outfile <- paste(tumourname,
-                       "_impute_output_chr",
-                       chrom, "_allHaplotypeInfo.txt", sep="")
-      vcfout <- paste(outbeagle_path,".vcf.gz",sep="")
+      outfile <- paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
+      vcfout <- paste0(outbeagle_path, ".vcf.gz")
       ## Convert beagle output file to impute2-like file
       writebeagle.as.impute(vcf=vcfout,
                             outfile=outfile)
@@ -545,7 +541,7 @@ run_haplotyping_germline = function(chrom, germlinename, normalname, ismale, imp
                                                         chrom=chrom)
       vcfbeagle_path <- paste(germlinename,"_beagle5_input_chr",chrom,".txt",sep="")
       outbeagle_path <- paste(germlinename,"_beagle5_output_chr",chrom,".txt",sep="")
-      writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path)
+      writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path,genomereference = genomebuild)
       ## Run beagle5 on the files
       run.beagle5(beaglejar=beaglejar,
                   vcfpath=vcfbeagle_path,

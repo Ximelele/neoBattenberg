@@ -111,7 +111,7 @@ read_beagle_output = function(filename) {
 concatenateImputeFiles<-function(inputStart, boundaries) { #outputFile, 
   infiles = c()
   for(i in 1:nrow(boundaries)) {
-    filename = paste(inputStart,"_",boundaries[i,1]/1000,"K_",boundaries[i,2]/1000,"K.txt_haps",sep="")
+    filename = paste0(inputStart, "_", boundaries[i, 1] / 1000, "K_", boundaries[i, 2] / 1000, "K.txt_haps")
     # Only add files that exist and have data
     if(file.exists(filename) && file.info(filename)$size>0) {
       infiles = c(infiles, filename)
@@ -127,7 +127,7 @@ concatenateBAFfiles<-function(inputStart, inputEnd, outputFile, chr_names) {
   colNames<-NULL
   for(i in chr_names)
   {
-    filename = paste(inputStart,i,inputEnd,sep="")
+    filename = paste0(inputStart, i, inputEnd)
     if(file.exists(filename) && file.info(filename)$size>0)
     {
       data<-as.data.frame(read_table_generic(filename))
@@ -142,9 +142,9 @@ concatenateBAFfiles<-function(inputStart, inputEnd, outputFile, chr_names) {
 #' Function to concatenate allele counter output
 #' @noRd
 concatenateAlleleCountFiles = function(inputStart, inputEnd, chr_names) {
-  infiles = c()
+  infiles = NULL
   for(chrom in chr_names) {
-    filename = paste(inputStart, chrom, inputEnd, sep="")
+    filename = paste0(inputStart, chrom, inputEnd)
     # Only add files that exist and have data
     if(file.exists(filename) && file.info(filename)$size>0) {
       infiles = c(infiles, filename)
@@ -158,7 +158,7 @@ concatenateAlleleCountFiles = function(inputStart, inputEnd, chr_names) {
 concatenateG1000SnpFiles = function(inputStart, inputEnd, chr_names) {
   data = list()
   for(chrom in chr_names) {
-    filename = paste(inputStart, chrom, inputEnd, sep="")
+    filename = paste0(inputStart, chrom, inputEnd)
     # Only add files that exist and have data
     if(file.exists(filename) && file.info(filename)$size>0) {
       # infiles = c(infiles, filename)
@@ -312,7 +312,7 @@ cnfit_to_refit_suggestions = function(samplename, subclones_file, rho_psi_file, 
                         qc=rep(NA, max_solutions),
                         cellularity_refit=rep(F, max_solutions),
                         chrom=subclones_clonal_cna$chr[1:max_solutions],
-                        pos=paste(position, "M", sep=""),
+                        pos= paste0(position, "M"),
                         maj=subclones_clonal_cna$nMaj1_A[1:max_solutions],
                         min=subclones_clonal_cna$nMin1_A[1:max_solutions],
                         baf=subclones_clonal_cna$BAF[1:max_solutions],
@@ -329,7 +329,7 @@ cnfit_to_refit_suggestions = function(samplename, subclones_file, rho_psi_file, 
     # No large clonal alteration, save a suggestion that should use an external purity value
     output = data.frame(project=NA, samplename=samplename, qc=NA, cellularity_refit=T, chrom=NA, pos=NA, maj=NA, min=NA, baf=NA, logr=NA, rho_estimate=NA, psi_t_estimate=NA, rho_diff=NA, psi_t_diff=NA)
   }
-  write.table(output, file=paste0(samplename, "_refit_suggestion.txt"), quote=F, sep="\t", row.names=F)
+  write.table(output, file=paste(samplename, "_refit_suggestion.txt"), quote=F, sep="\t", row.names=F)
 }
 
 ########################################################################################
@@ -339,7 +339,7 @@ cnfit_to_refit_suggestions = function(samplename, subclones_file, rho_psi_file, 
 #' @noRd
 assert.file.exists = function(filename) {
   if (!file.exists(filename)) {
-    warning(paste("Supplied file does not exist: ", filename, sep=""))
+    warning(paste0("Supplied file does not exist: ", filename))
     quit(save="no", status=1)
   }
 }

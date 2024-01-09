@@ -343,7 +343,8 @@ battenberg = function(analysis="paired", samplename, normalname, sample_data_fil
                           beaglewindow=beaglewindow,
                           beagleoverlap=beagleoverlap,
                           externalhaplotypeprefix=externalhaplotypeprefix,
-                          use_previous_imputation=(sampleidx > 1))
+                          use_previous_imputation=(sampleidx > 1),
+                          genomeBuild = genomebuild)
         }
       }
       
