@@ -280,6 +280,8 @@ gc.correct.wgs = function(Tumour_LogR_file, outfile, correlations_outfile, gc_co
     replic_files = paste0(replic_timing_file_prefix, chrom_names, ".txt.gz")
     replic_data = do.call(rbind, lapply(replic_files, read_replication))
   }
+  # fixed mixed names
+  Tumor_LogR$Chromosome <- paste0("chr", Tumor_LogR$Chromosome)
 
   # omit non-matching loci, replication data generated at exactly same GC loci
   locimatches = match(x = paste0(Tumor_LogR$Chromosome, "_", Tumor_LogR$Position),
@@ -436,9 +438,9 @@ prepare_wgs = function(chrom_names, tumourbam, normalbam, tumourname, normalname
                   minCounts=min_normal_depth,
                   samplename=tumourname)
   # Perform GC correction
-  gc.correct.wgs(Tumour_LogR_file=paste(tumourname,"_mutantLogR.tab", sep=""),
-                 outfile=paste(tumourname,"_mutantLogR_gcCorrected.tab", sep=""),
-                 correlations_outfile=paste(tumourname, "_GCwindowCorrelations.txt", sep=""),
+  gc.correct.wgs(Tumour_LogR_file= paste0(tumourname, "_mutantLogR.tab"),
+                 outfile= paste0(tumourname, "_mutantLogR_gcCorrected.tab"),
+                 correlations_outfile= paste0(tumourname, "_GCwindowCorrelations.txt"),
                  gc_content_file_prefix=gccorrectprefix,
                  replic_timing_file_prefix=repliccorrectprefix,
                  chrom_names=chrom_names)
