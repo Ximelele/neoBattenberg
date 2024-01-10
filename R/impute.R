@@ -254,6 +254,10 @@ run.beagle5 = function(beaglejar,
                        maxheap.gb=10,
 		       javajre="java")
 {
+    # fix naming issues causing beagle not to work
+    fix_file_cmd <- paste("sed -i 's/^chr//g'",vcfpath)
+    system(fix_file_cmd, wait=T)
+
     cmd <- paste0(javajre,
 		  " -Xmx",maxheap.gb,"g",
 		  " -Xms", maxheap.gb, "g",
@@ -263,7 +267,6 @@ run.beagle5 = function(beaglejar,
                   " ref=",reffile ,
                   " out=",outpath,
                   " map=",plinkfile,
-                  " nthreads=",nthreads,
                   " window=",window,
                   " overlap=",overlap,
                   " impute=false")
@@ -312,7 +315,6 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                            beagleoverlap=4,
 			   javajre="java",genomeBuild="hg19")
 {
-  
   previoushaplotypefile <- list.files(pattern = paste0("_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))[1]
   if (use_previous_imputation & !is.na(previoushaplotypefile)) {
     
@@ -355,6 +357,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
       outbeagle_path <- paste0(tumourname, "_beagle5_output_chr", chrom, ".txt")
       writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path,genomereference = genomeBuild)
       ## Run beagle5 on the files
+
       run.beagle5(beaglejar=beaglejar,
                   vcfpath=vcfbeagle_path,
                   reffile=beagleref,
