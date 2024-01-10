@@ -267,6 +267,7 @@ run.beagle5 = function(beaglejar,
                   " ref=",reffile ,
                   " out=",outpath,
                   " map=",plinkfile,
+                  " nthreads=",nthreads,
                   " window=",window,
                   " overlap=",overlap,
                   " impute=false")
