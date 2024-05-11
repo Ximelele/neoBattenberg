@@ -76,20 +76,20 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                        write_battenberg_phasing = T, multisample_relative_weight_balanced = 0.25, multisample_maxlag = 100, segmentation_gamma_multisample = 5,
                        snp6_reference_info_file = NA, apt.probeset.genotype.exe = "apt-probeset-genotype", apt.probeset.summarize.exe = "apt-probeset-summarize",
                        norm.geno.clust.exe = "normalize_affy_geno_cluster.pl", birdseed_report_file = "birdseed.report.txt", heterozygousFilter = "none",
-                       prior_breakpoints_file = NULL, genomebuild = "hg19", chrom_coord_file = NULL) {
+                       prior_breakpoints_file = NULL, genomebuild = "hg19", chrom_coord_file = NULL, allelecounter_directory="Allle_counts",impute_directory="Impute",plots_directory="Plots") {
 
   requireNamespace("foreach")
   requireNamespace("doParallel")
   requireNamespace("parallel")
   
-  if (!dir.exists("Allle_counts")){
-    mkdir("Allle_counts")
+  if (!dir.exists(allelecounter_directory)){
+    mkdir(allelecounter_directory)
   }
-  if (!dir.exists("Imputes")){
-    mkdir("Imputes")
+  if (!dir.exists(impute_directory)){
+    mkdir(impute_directory)
   }
-  if (!dir.exists("Plots")){
-    mkdir("Plots")
+  if (!dir.exists(plots_directory)){
+    mkdir(plots_directory)
   }
 
   if (analysis == "cell_line") {
@@ -199,7 +199,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                       min_normal_depth = min_normal_depth,
                       nthreads = nthreads,
                       skip_allele_counting = skip_allele_counting[sampleidx],
-                      skip_allele_counting_normal = (sampleidx > 1))
+                      skip_allele_counting_normal = (sampleidx > 1),allele_directory=allelecounter_directory)
 
         } else if (analysis == "cell_line") {
           prepare_wgs_cell_line(chrom_names = chrom_names,
