@@ -388,8 +388,8 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
       # Write the Battenberg phasing information to disk as a vcf
       write_battenberg_phasing(tumourname = samplename[sampleidx],
                                SNPfiles = paste0(allelecounter_directory, "/", samplename[sampleidx], "_alleleFrequencies_chr", chrom_names, ".txt"),
-                               imputedHaplotypeFiles = paste0(mpute_directory, "/", samplename[sampleidx], "_impute_output_chr", chrom_names, "_allHaplotypeInfo.txt"),
-                               bafsegmented_file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                               imputedHaplotypeFiles = paste0(impute_directory, "/", samplename[sampleidx], "_impute_output_chr", chrom_names, "_allHaplotypeInfo.txt"),
+                               bafsegmented_file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                                outprefix = paste0(samplename[sampleidx], "_Battenberg_phased_chr"),
                                chrom_names = chrom_names,
                                include_homozygous = F)
@@ -502,7 +502,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     if (data_type == "wgs" | data_type == "WGS") {
       logr_file <- paste0(samplename[sampleidx], "_mutantLogR_gcCorrected.tab")
       if (analysis == "paired") {
-        allelecounts_file <- paste0(samplename[sampleidx], "_alleleCounts.tab")
+        allelecounts_file <- paste0(allelecounter_directory, "/", samplename[sampleidx], "_alleleCounts.tab")
       } else {
         # Not produced by a number of analysis and is required for some plots. Setting to NULL  makes the pipeline not attempt to create these plots
         allelecounts_file <- NULL
@@ -512,7 +512,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     # Fit a clonal copy number profile
     fit.copy.number(samplename = samplename[sampleidx],
                     outputfile.prefix = paste0(samplename[sampleidx], "_"),
-                    inputfile.baf.segmented = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                    inputfile.baf.segmented = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                     inputfile.baf = paste0(samplename[sampleidx], "_mutantBAF.tab"),
                     inputfile.logr = logr_file,
                     dist_choice = clonality_dist_metric,
@@ -531,7 +531,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
 
     # Go over all segments, determine which segements are a mixture of two states and fit a second CN state
     callSubclones(sample.name = samplename[sampleidx],
-                  baf.segmented.file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                  baf.segmented.file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                   logr.file = logr_file,
                   rho.psi.file = paste0(samplename[sampleidx], "_rho_and_psi.txt"),
                   output.file = paste0(samplename[sampleidx], "_copynumber.txt"),
@@ -561,7 +561,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     # Make some post-hoc plots
     make_posthoc_plots(samplename = samplename[sampleidx],
                        logr_file = logr_file,
-                       bafsegmented_file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                       bafsegmented_file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                        logrsegmented_file = paste0(samplename[sampleidx], ".logRsegmented.txt"),
                        allelecounts_file = allelecounts_file)
 
