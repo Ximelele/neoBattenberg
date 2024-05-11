@@ -130,9 +130,12 @@ concatenateBAFfiles<-function(inputStart, inputEnd, outputFile, chr_names) {
     filename = paste0(inputStart, i, inputEnd)
     if(file.exists(filename) && file.info(filename)$size>0)
     {
+      # TODO last error when chromosome X haplo is empty
+      try({
       data<-as.data.frame(read_table_generic(filename))
       all_data<-rbind(all_data,data)
       colNames<-names(data)
+      }, silent = TRUE)
     }
   }
   #rnames=paste("snp",1:nrow(all_data),sep="")
