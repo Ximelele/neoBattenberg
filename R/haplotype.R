@@ -37,8 +37,7 @@ GetChromosomeBAFs_SNP6 = function(chrom, alleleFreqFile, haplotypeFile, samplena
 
 #' Morphs phased SNPs from WGS input into haplotype blocks
 #' 
-#' @param chrom The chromosome number for which this function is called.
-#' @param SNP_file File containing allele counts for each SNP location.
+#' @param chrom The chromosome number for which this function
 #' @param haplotypeFile File containing impute phasing output.
 #' @param samplename Name of the sample (used in header of output file).
 #' @param outfile Full path to where the output will be written.
