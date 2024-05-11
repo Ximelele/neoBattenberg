@@ -83,13 +83,13 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
   requireNamespace("parallel")
   
   if (!dir.exists(allelecounter_directory)){
-    mkdir(allelecounter_directory)
+    dir.create(allelecounter_directory)
   }
   if (!dir.exists(impute_directory)){
-    mkdir(impute_directory)
+    dir.create(impute_directory)
   }
   if (!dir.exists(plots_directory)){
-    mkdir(plots_directory)
+    dir.create(plots_directory)
   }
 
   if (analysis == "cell_line") {
