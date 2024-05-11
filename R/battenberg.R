@@ -353,7 +353,11 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                           beagleoverlap = beagleoverlap,
                           externalhaplotypeprefix = externalhaplotypeprefix,
                           use_previous_imputation = (sampleidx > 1),
-                          genomeBuild = genomebuild)
+                          genomeBuild = genomebuild,
+                          allele_directory = allelecounter_directory,
+                          impute_directory= impute_directory,
+                          plots_directory = plots_directory
+                          )
         }
       }
 

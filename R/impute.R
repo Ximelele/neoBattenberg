@@ -314,24 +314,24 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                            beaglenthreads=1,
                            beaglewindow=40,
                            beagleoverlap=4,
-			   javajre="java",genomeBuild="hg19")
+			   javajre="java",genomeBuild="hg19",allele_directory,impute_directory,plots_directory)
 {
-  previoushaplotypefile <- list.files(pattern = paste0("_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))[1]
+  previoushaplotypefile <- list.files(pattern = paste0(impute_directory,"/","_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))[1]
   if (use_previous_imputation & !is.na(previoushaplotypefile)) {
     
     print(paste0("Previous imputation results found, copying info from", previoushaplotypefile, " to flip alleles"))
-    currenthaplotypefile <- paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
+    currenthaplotypefile <- paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
     if (previoushaplotypefile != currenthaplotypefile) {
-      file.copy(from = previoushaplotypefile, to = paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))
+      file.copy(from = previoushaplotypefile, to = paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"))
     }
     
   } else {
     
     if (file.exists(paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"))) {
       generate.impute.input.wgs(chrom=chrom,
-                                tumour.allele.counts.file= paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
-                                normal.allele.counts.file= paste0(normalname, "_alleleFrequencies_chr", chrom, ".txt"),
-                                output.file= paste0(tumourname, "_impute_input_chr", chrom, ".txt"),
+                                tumour.allele.counts.file= paste0(allele_directory,"/",tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
+                                normal.allele.counts.file= paste0(allele_directory,"/",normalname, "_alleleFrequencies_chr", chrom, ".txt"),
+                                output.file= paste0(impute_directory,"/",tumourname, "_impute_input_chr", chrom, ".txt"),
                                 imputeinfofile=imputeinfofile,
                                 is.male=ismale,
                                 problemLociFile=problemloci,
@@ -339,7 +339,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
     } else {
       generate.impute.input.snp6(infile.germlineBAF= paste0(tumourname, "_germlineBAF.tab"),
                                  infile.tumourBAF= paste0(tumourname, "_mutantBAF.tab"),
-                                 outFileStart= paste0(tumourname, "_impute_input_chr"),
+                                 outFileStart= paste0(impute_directory,"/",tumourname, "_impute_input_chr"),
                                  chrom=chrom,
                                  chr_names=chrom_names,
                                  problemLociFile=problemloci,
@@ -351,11 +351,11 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
     
     if(usebeagle){
       ## Convert input files for beagle5
-      imputeinputfile <- paste0(tumourname, "_impute_input_chr", chrom, ".txt")
+      imputeinputfile <- paste0(impute_directory,"/",tumourname, "_impute_input_chr", chrom, ".txt")
       vcfbeagle <- convert.impute.input.to.beagle.input(imputeinput=imputeinputfile,
                                                         chrom=chrom)
-      vcfbeagle_path <- paste0(tumourname, "_beagle5_input_chr", chrom, ".txt")
-      outbeagle_path <- paste0(tumourname, "_beagle5_output_chr", chrom, ".txt")
+      vcfbeagle_path <- paste0(impute_directory,"/",tumourname, "_beagle5_input_chr", chrom, ".txt")
+      outbeagle_path <- paste0(impute_directory,"/",tumourname, "_beagle5_output_chr", chrom, ".txt")
       writevcf.beagle(vcfbeagle, filepath=vcfbeagle_path,genomereference = genomeBuild)
       ## Run beagle5 on the files
 
@@ -369,7 +369,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                   window=beaglewindow,
                   overlap=beagleoverlap,
                   javajre=javajre)
-      outfile <- paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
+      outfile <- paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt")
       vcfout <- paste0(outbeagle_path, ".vcf.gz")
       ## Convert beagle output file to impute2-like file
       writebeagle.as.impute(vcf=vcfout,
@@ -377,8 +377,8 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
     }
     else {
       # Run impute on the files
-      run.impute(inputfile= paste0(tumourname, "_impute_input_chr", chrom, ".txt"),
-                 outputfile.prefix= paste0(tumourname, "_impute_output_chr", chrom, ".txt"),
+      run.impute(inputfile= paste0(impute_directory,"/",tumourname, "_impute_input_chr", chrom, ".txt"),
+                 outputfile.prefix= paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, ".txt"),
                  is.male=ismale,
                  imputeinfofile=imputeinfofile,
                  impute.exe=impute_exe,
@@ -386,21 +386,21 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
                  chrom=chrom)
       
       # As impute runs in windows across a chromosome we need to assemble the output
-      combine.impute.output(inputfile.prefix= paste0(tumourname, "_impute_output_chr", chrom, ".txt"),
-                            outputfile= paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
+      combine.impute.output(inputfile.prefix= paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, ".txt"),
+                            outputfile= paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
                             is.male=ismale,
                             imputeinfofile=imputeinfofile,
                             region.size=5000000,
                             chrom=chrom)
       # Cleanup temp Impute output
-      unlink(paste0(tumourname, "_impute_output_chr", chrom, ".txt*K.txt*"))
+      unlink(paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, ".txt*K.txt*"))
     }
     
   }
   
 
   # If an allele counts file exists we assume this is a WGS sample and run the corresponding step, otherwise it must be SNP6
-  allelefrequenciesfile <- paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt")
+  allelefrequenciesfile <- paste0(allele_directory,"/",tumourname, "_alleleFrequencies_chr", chrom, ".txt")
   print(allelefrequenciesfile)
   print(file.exists(allelefrequenciesfile))
   
@@ -422,7 +422,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
       
       # Plot what we have before external haplotyping is incorporated
       plot.haplotype.data(haplotyped.baf.file= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped_noExt.txt"),
-                          imageFileName= paste0(tumourname, "_chr", chrom, "_heterozygousData_noExt.png"),
+                          imageFileName= paste0(plots_directory,"/",tumourname, "_chr", chrom, "_heterozygousData_noExt.png"),
                           samplename=tumourname,
                           chrom=chrom,
                           chr_names=chrom_names)
@@ -454,7 +454,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
   
   # Plot what we have until this point
   plot.haplotype.data(haplotyped.baf.file= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped.txt"),
-                      imageFileName= paste0(tumourname, "_chr", chrom, "_heterozygousData.png"),
+                      imageFileName= paste0(plots_directory,"/",tumourname, "_chr", chrom, "_heterozygousData.png"),
                       samplename=tumourname,
                       chrom=chrom,
                       chr_names=chrom_names)
