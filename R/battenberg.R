@@ -81,6 +81,16 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
   requireNamespace("foreach")
   requireNamespace("doParallel")
   requireNamespace("parallel")
+  
+  if (!dir.exists("Allle_counts")){
+    mkdir("Allle_counts")
+  }
+  if (!dir.exists("Imputes")){
+    mkdir("Imputes")
+  }
+  if (!dir.exists("Plots")){
+    mkdir("Plots")
+  }
 
   if (analysis == "cell_line") {
     calc_seg_baf_option <- 1
