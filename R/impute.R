@@ -327,7 +327,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
     
   } else {
     
-    if (file.exists(paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"))) {
+    if (file.exists(paste0(allele_directory,"/",tumourname, "_alleleFrequencies_chr", chrom, ".txt"))) {
       generate.impute.input.wgs(chrom=chrom,
                                 tumour.allele.counts.file= paste0(allele_directory,"/",tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
                                 normal.allele.counts.file= paste0(allele_directory,"/",normalname, "_alleleFrequencies_chr", chrom, ".txt"),

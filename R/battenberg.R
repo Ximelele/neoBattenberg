@@ -199,7 +199,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                       min_normal_depth = min_normal_depth,
                       nthreads = nthreads,
                       skip_allele_counting = skip_allele_counting[sampleidx],
-                      skip_allele_counting_normal = (sampleidx > 1),allele_directory=allelecounter_directory)
+                      skip_allele_counting_normal = (sampleidx > 1),allele_directory=allelecounter_directory,plots_directory=plots_directory)
 
         } else if (analysis == "cell_line") {
           prepare_wgs_cell_line(chrom_names = chrom_names,
