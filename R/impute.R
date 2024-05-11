@@ -414,14 +414,14 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
       # output BAFs to plot pre-external haplotyping
       GetChromosomeBAFs(chrom=chrom,
                         SNP_file=allelefrequenciesfile,
-                        haplotypeFile= paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
+                        haplotypeFile= paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
                         samplename=tumourname,
-                        outfile= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped_noExt.txt"),
+                        outfile= paste0(impute_directory,"/",tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped_noExt.txt"),
                         chr_names=chrom_names,
                         minCounts=min_normal_depth)
       
       # Plot what we have before external haplotyping is incorporated
-      plot.haplotype.data(haplotyped.baf.file= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped_noExt.txt"),
+      plot.haplotype.data(haplotyped.baf.file= paste0(impute_directory,"/",tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped_noExt.txt"),
                           imageFileName= paste0(plots_directory,"/",tumourname, "_chr", chrom, "_heterozygousData_noExt.png"),
                           samplename=tumourname,
                           chrom=chrom,
@@ -429,16 +429,16 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
       
       input_known_haplotypes(chrom = chrom,
                              chrom_names = chrom_names,
-                             imputedHaplotypeFile = paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
-                             externalHaplotypeFile = paste0(externalhaplotypeprefix, chrom, ".vcf"))
+                             imputedHaplotypeFile = paste0(impute_directory,"/",tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
+                             externalHaplotypeFile = paste0(impute_directory,"/",externalhaplotypeprefix, chrom, ".vcf"))
       
     }
     
     GetChromosomeBAFs(chrom=chrom,
-                      SNP_file= paste0(tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
+                      SNP_file= paste0(allele_directory,"/",tumourname, "_alleleFrequencies_chr", chrom, ".txt"),
                       haplotypeFile= paste0(tumourname, "_impute_output_chr", chrom, "_allHaplotypeInfo.txt"),
                       samplename=tumourname,
-                      outfile= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped.txt"),
+                      outfile= paste0(impute_directory,"/",tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped.txt"),
                       chr_names=chrom_names,
                       minCounts=min_normal_depth)
   } else {
@@ -453,7 +453,7 @@ run_haplotyping = function(chrom, tumourname, normalname, ismale, imputeinfofile
   }
   
   # Plot what we have until this point
-  plot.haplotype.data(haplotyped.baf.file= paste0(tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped.txt"),
+  plot.haplotype.data(haplotyped.baf.file= paste0(impute_directory,"/",tumourname, "_chr", chrom, "_heterozygousMutBAFs_haplotyped.txt"),
                       imageFileName= paste0(plots_directory,"/",tumourname, "_chr", chrom, "_heterozygousData.png"),
                       samplename=tumourname,
                       chrom=chrom,
