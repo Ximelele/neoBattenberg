@@ -208,7 +208,7 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
 #' @param calc_seg_baf_option Various options to recalculate the BAF of a segment. Options are: 1 - median, 2 - mean, 3 - ifelse median==0|1, mean, median. (Default: 3)
 #' @author dw9, sd11
 #' @export
-
+# FIXME this is causing the last error
 callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.file, output.file, output.figures.prefix, output.gw.figures.prefix, chr_names, masking_output_file, max_allowed_state=250, prior_breakpoints_file=NULL, gamma=1, segmentation.gamma=NA, siglevel=0.05, maxdist=0.01, noperms=1000, seed=as.integer(Sys.time()), calc_seg_baf_option=3) {
   
   set.seed(seed)
@@ -260,7 +260,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   res = determine_copynumber(BAFvals, LogRvals, rho, psi, gamma, ctrans, ctrans.logR, maxdist, siglevel, noperms)
   subcloneres = res$subcloneres
   write.table(subcloneres, gsub(".txt", "_1.txt", output.file), quote=F, col.names=T, row.names=F, sep="\t")
-  
+  print("Im here line 263")
   # Scan the segments for cases that should be merged
   res = merge_segments(subcloneres, BAFvals, LogRvals, rho, psi, gamma, calc_seg_baf_option)
   BAFvals = res$bafsegmented
@@ -278,7 +278,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   # Write the masking details to file
   masking_details = data.frame(samplename=sample.name, masked_count=res$masked_count, masked_size=res$masked_size, max_allowed_state=max_allowed_state)
   write.table(masking_details, file=masking_output_file, quote=F, col.names=T, row.names=F, sep="\t")
-  
+  print("Im here line 281")
   # Write the final copy number profile 
   # NAP: generating two output files: first reporting solution A and the second reporting alternative solutions (B to F)
   write.table(subcloneres[,c(1:3,8:13)], output.file, quote=F, col.names=T, row.names=F, sep="\t")
@@ -783,7 +783,7 @@ merge_segments=function(subclones, bafsegmented, logR, rho, psi, platform_gamma,
 mask_high_cn_segments = function(subclones, bafsegmented, max_allowed_state) {
   count = 0
   masked_size = 0
-  for (i in 1:nrow(subclones)) {
+  for (i in seq_len(nrow(subclones))) {
     if (subclones$nMaj1_A[i] > max_allowed_state | subclones$nMin1_A[i] > max_allowed_state) {
       # Mask this segment
       subclones[i, "nMaj1_A"] = NA
