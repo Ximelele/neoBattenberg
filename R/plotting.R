@@ -9,7 +9,7 @@ create.haplotype.plot = function(chrom.position, points.blue, points.red, x.min,
   )
 
   plot <- ggplot(data) +
-    geom_point(aes(x = chrom.position, y = points.blue), color = "cyan", size = point.size) +
+    geom_point(aes(x = chrom.position, y = points.blue), color = "deepskyblue4", size = point.size) +
     geom_point(aes(x = chrom.position, y = points.red), color = "brown2", size = point.size) +
     scale_x_continuous(limits = c(x.min, x.max)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
