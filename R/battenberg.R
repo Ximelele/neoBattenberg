@@ -82,6 +82,14 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
   requireNamespace("doParallel")
   requireNamespace("parallel")
 
+  original_wd <- getwd()
+
+  if (!dir.exists(samplename)) {
+    dir.create(samplename)
+  }
+
+  setwd(paste0(original_wd, "/", samplename))
+
   if (!dir.exists(allelecounter_directory)) {
     dir.create(allelecounter_directory)
   }
@@ -511,7 +519,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
 
     # Fit a clonal copy number profile
     fit.copy.number(samplename = samplename[sampleidx],
-                    outputfile.prefix = paste0(samplename[sampleidx], "_"),
+                    outputfile.prefix = paste0(plots_directory, "/", samplename[sampleidx], "_"),
                     inputfile.baf.segmented = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                     inputfile.baf = paste0(samplename[sampleidx], "_mutantBAF.tab"),
                     inputfile.logr = logr_file,
@@ -583,4 +591,6 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                           tumournames = samplename,
                           plotting = T)
   }
+  #set original wd
+  setwd(original_wd)
 }
