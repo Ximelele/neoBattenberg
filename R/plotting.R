@@ -9,12 +9,12 @@ create.haplotype.plot = function(chrom.position, points.blue, points.red, x.min,
   )
 
   plot <- ggplot(data) +
-    geom_point(aes(x = chrom.position, y = points.blue), color = "deepskyblue", size = point.size) +
-    geom_point(aes(x = chrom.position, y = points.red), color = "coral1", size = point.size) +
+    geom_point(aes(x = chrom.position, y = points.blue), color = "cyan", size = point.size) +
+    geom_point(aes(x = chrom.position, y = points.red), color = "brown2", size = point.size) +
     scale_x_continuous(limits = c(x.min, x.max)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
     labs(title = title, x = xlab, y = ylab) +
-    theme_bw() +
+    theme_classic() +
     theme(
       plot.title = element_text(size = 10, hjust = 0.5, color = "black", face = "bold"),
       axis.title.x = element_text(size = 8, face = "bold"),
