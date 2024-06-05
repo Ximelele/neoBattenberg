@@ -390,8 +390,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                        phasegamma = phasing_gamma,
                        kmin = segmentation_kmin,
                        phasekmin = phasing_kmin,
-                       calc_seg_baf_option = calc_seg_baf_option,
-                       plots_directory)
+                       calc_seg_baf_option = calc_seg_baf_option)
 
     if (nsamples > 1 | write_battenberg_phasing) {
       # Write the Battenberg phasing information to disk as a vcf
