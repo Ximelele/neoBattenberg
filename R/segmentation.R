@@ -176,7 +176,7 @@ segment.baf.phased.sv = function(samplename, inputfile, outputfile, svs=NULL, ga
 #' @param calc_seg_baf_option Various options to recalculate the BAF of a segment. Options are: 1 - median, 2 - mean, 3 - ifelse median==0 or 1, median, mean. (Default: 3)
 #' @author sd11
 #' @export
-segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoints_file=NULL, gamma=10, phasegamma=3, kmin=3, phasekmin=3, no_segmentation=F, calc_seg_baf_option=3) {
+segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoints_file=NULL, gamma=10, phasegamma=3, kmin=3, phasekmin=3, no_segmentation=F, calc_seg_baf_option=3,plots_directory) {
   # Function that takes SNPs that belong to a single segment and looks for big holes between
   # each pair of SNPs. If there is a big hole it will add another breakpoint to the breakpoints data.frame
   addin_bigholes = function(breakpoints, positions, chrom, startpos, maxsnpdist) {
@@ -365,29 +365,29 @@ segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoin
       BAFoutput_preseg = run_pcf(BAFrawchr, breakpoints_chrom$start[r], breakpoints_chrom$end[r], phasekmin, phasegamma, kmin, gamma, no_segmentation)
       BAFoutputchr = rbind(BAFoutputchr, BAFoutput_preseg)
     }
-    
-    png(filename = paste(samplename,"_RAFseg_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
-    create.segmented.plot(chrom.position=BAFoutputchr$Position/1000000, 
-                          points.red=BAFoutputchr$BAF, 
-                          points.green=BAFoutputchr$tempBAFsegm, 
-                          x.min=min(BAFoutputchr$Position)/1000000, 
-                          x.max=max(BAFoutputchr$Position)/1000000, 
-                          title=paste(samplename,", chromosome ", chr, sep=""), 
-                          xlab="Position (Mb)", 
+
+    png(filename = paste(plots_directory,'/',samplename,"_RAFseg_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
+    create.segmented.plot(chrom.position=BAFoutputchr$Position/1000000,
+                          points.red=BAFoutputchr$BAF,
+                          points.green=BAFoutputchr$tempBAFsegm,
+                          x.min=min(BAFoutputchr$Position)/1000000,
+                          x.max=max(BAFoutputchr$Position)/1000000,
+                          title=paste(samplename,", chromosome ", chr, sep=""),
+                          xlab="Position (Mb)",
                           ylab="BAF (phased)",
                           prior_bkps_pos=bkps_chrom$position/1000000)
     dev.off()
-    
-    png(filename = paste(samplename,"_segment_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
-    create.baf.plot(chrom.position=BAFoutputchr$Position/1000000, 
-                    points.red.blue=BAFoutputchr$BAF, 
+
+    png(filename = paste(plots_directory,'/',samplename,"_segment_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
+    create.baf.plot(chrom.position=BAFoutputchr$Position/1000000,
+                    points.red.blue=BAFoutputchr$BAF,
                     plot.red=BAFoutputchr$tempBAFsegm>0.5,
-                    points.darkred=BAFoutputchr$BAFseg, 
-                    points.darkblue=1-BAFoutputchr$BAFseg, 
-                    x.min=min(BAFoutputchr$Position)/1000000, 
-                    x.max=max(BAFoutputchr$Position)/1000000, 
-                    title=paste(samplename,", chromosome ", chr, sep=""), 
-                    xlab="Position (Mb)", 
+                    points.darkred=BAFoutputchr$BAFseg,
+                    points.darkblue=1-BAFoutputchr$BAFseg,
+                    x.min=min(BAFoutputchr$Position)/1000000,
+                    x.max=max(BAFoutputchr$Position)/1000000,
+                    title=paste(samplename,", chromosome ", chr, sep=""),
+                    xlab="Position (Mb)",
                     ylab="BAF (phased)",
                     prior_bkps_pos=bkps_chrom$position/1000000)
     dev.off()
