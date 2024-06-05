@@ -175,7 +175,7 @@ segment.baf.phased.sv = function(samplename, inputfile, outputfile, svs=NULL, ga
 #' @param calc_seg_baf_option Various options to recalculate the BAF of a segment. Options are: 1 - median, 2 - mean, 3 - ifelse median==0 or 1, median, mean. (Default: 3)
 #' @author sd11
 #' @export
-segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoints_file=NULL, gamma=10, phasegamma=3, kmin=3, phasekmin=3, no_segmentation=F, calc_seg_baf_option=3) {
+segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoints_file=NULL, gamma=10, phasegamma=3, kmin=3, phasekmin=3, no_segmentation=F, calc_seg_baf_option=3,plots_directory) {
   # Function that takes SNPs that belong to a single segment and looks for big holes between
   # each pair of SNPs. If there is a big hole it will add another breakpoint to the breakpoints data.frame
   addin_bigholes = function(breakpoints, positions, chrom, startpos, maxsnpdist) {
@@ -289,7 +289,7 @@ segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoin
       sdev = 0.09
     }
     
-    print(paste("BAFlen=",length(BAF),sep=""))
+    print(paste0("BAFlen=",length(BAF)))
     if(length(BAF)<50){
       BAFsegm = rep(mean(BAF),length(BAF))
     }else{
@@ -365,7 +365,7 @@ segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoin
       BAFoutputchr = rbind(BAFoutputchr, BAFoutput_preseg)
     }
     
-    png(filename = paste(samplename,"_RAFseg_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
+    png(filename = paste(plots_directory,'/',samplename,"_RAFseg_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
     create.segmented.plot(chrom.position=BAFoutputchr$Position/1000000, 
                           points.red=BAFoutputchr$BAF, 
                           points.green=BAFoutputchr$tempBAFsegm, 
@@ -377,7 +377,7 @@ segment.baf.phased = function(samplename, inputfile, outputfile, prior_breakpoin
                           prior_bkps_pos=bkps_chrom$position/1000000)
     dev.off()
     
-    png(filename = paste(samplename,"_segment_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
+    png(filename = paste(plots_directory,'/',samplename,"_segment_chr",chr,".png",sep=""), width = 2000, height = 1000, res = 200)
     create.baf.plot(chrom.position=BAFoutputchr$Position/1000000, 
                     points.red.blue=BAFoutputchr$BAF, 
                     plot.red=BAFoutputchr$tempBAFsegm>0.5,

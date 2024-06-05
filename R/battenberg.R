@@ -390,7 +390,8 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                        phasegamma = phasing_gamma,
                        kmin = segmentation_kmin,
                        phasekmin = phasing_kmin,
-                       calc_seg_baf_option = calc_seg_baf_option)
+                       calc_seg_baf_option = calc_seg_baf_option,
+                       plots_directory)
 
     if (nsamples > 1 | write_battenberg_phasing) {
       # Write the Battenberg phasing information to disk as a vcf
@@ -519,7 +520,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
 
     # Fit a clonal copy number profile
     fit.copy.number(samplename = samplename[sampleidx],
-                    outputfile.prefix = paste0(plots_directory, "/", samplename[sampleidx], "_"),
+                    outputfile.prefix = paste0(samplename[sampleidx], "_"),
                     inputfile.baf.segmented = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                     inputfile.baf = paste0(samplename[sampleidx], "_mutantBAF.tab"),
                     inputfile.logr = logr_file,
@@ -535,7 +536,8 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                     preset_rho = NA,
                     preset_psi = NA,
                     read_depth = 30,
-                    analysis = analysis)
+                    analysis = analysis,
+                    plots_directory=plots_directory)
 
     # Go over all segments, determine which segements are a mixture of two states and fit a second CN state
     callSubclones(sample.name = samplename[sampleidx],
@@ -543,8 +545,8 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                   logr.file = logr_file,
                   rho.psi.file = paste0(samplename[sampleidx], "_rho_and_psi.txt"),
                   output.file = paste0(samplename[sampleidx], "_copynumber.txt"),
-                  output.figures.prefix = paste0(samplename[sampleidx], "_subclones_chr"),
-                  output.gw.figures.prefix = paste0(samplename[sampleidx], "_BattenbergProfile"),
+                  output.figures.prefix = paste0(plots_directory,'/',samplename[sampleidx], "_subclones_chr"),
+                  output.gw.figures.prefix = paste0(plots_directory,'/',samplename[sampleidx], "_BattenbergProfile"),
                   masking_output_file = paste0(samplename[sampleidx], "_segment_masking_details.txt"),
                   prior_breakpoints_file = prior_breakpoints_file,
                   chr_names = chrom_names,
