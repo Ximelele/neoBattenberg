@@ -157,17 +157,17 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
   if (use_preset_rho_psi) {
     ascat_optimum_pair = list(rho = preset_rho, psi = preset_psi, ploidy = preset_psi)
   }else {
-    distance.outfile = paste0(plots_directory,'/',outputfile.prefix, "distance.png") # kjd 20-2-2014
-    copynumberprofile.outfile = paste0(plots_directory,'/',outputfile.prefix, "copynumberprofile.png") # kjd 20-2-2014
-    nonroundedprofile.outfile = paste0(plots_directory,'/',outputfile.prefix, "nonroundedprofile.png") # kjd 20-2-2014
+    distance.outfile = paste0(plots_directory, '/', outputfile.prefix, "distance.png") # kjd 20-2-2014
+    copynumberprofile.outfile = paste0(plots_directory, '/', outputfile.prefix, "copynumberprofile.png") # kjd 20-2-2014
+    nonroundedprofile.outfile = paste0(plots_directory, '/', outputfile.prefix, "nonroundedprofile.png") # kjd 20-2-2014
     cnaStatusFile = paste0(outputfile.prefix, "copynumber_solution_status.txt")
 
     ascat_optimum_pair = runASCAT(logR, 1 - BAF.data[, 3], segLogR, segBAF, chr.segs, ascat_dist_choice, distance.outfile, copynumberprofile.outfile, nonroundedprofile.outfile, cnaStatusFile = cnaStatusFile, gamma = gamma_param, allow100percent = T, reliabilityFile = NA, min.ploidy = min.ploidy, max.ploidy = max.ploidy, min.rho = min.rho, max.rho = max.rho, min.goodness, chr.names = chr.names, analysis = analysis) # kjd 4-2-2014
   }
 
-  distance.outfile = paste(outputfile.prefix, "second_distance.png", sep = "", collapse = "") # kjd 20-2-2014
-  copynumberprofile.outfile = paste(outputfile.prefix, "second_copynumberprofile.png", sep = "", collapse = "") # kjd 20-2-2014
-  nonroundedprofile.outfile = paste(outputfile.prefix, "second_nonroundedprofile.png", sep = "", collapse = "") # kjd 20-2-2014
+  distance.outfile = paste0(plots_directory, '/', outputfile.prefix, "second_distance.png") # kjd 20-2-2014
+  copynumberprofile.outfile = paste0(plots_directory, '/', outputfile.prefix, "second_copynumberprofile.png") # kjd 20-2-2014
+  nonroundedprofile.outfile = paste0(plots_directory, '/', outputfile.prefix, "second_nonroundedprofile.png") # kjd 20-2-2014
 
   # All is set up, now run ASCAT to obtain a clonal copynumber profile
   out = run_clonal_ASCAT(logR, 1 - BAF.data[, 3], segLogR, segBAF, chr.segs, matched.segmented.BAF.data, ascat_optimum_pair, dist_choice, distance.outfile, copynumberprofile.outfile, nonroundedprofile.outfile, gamma_param = gamma_param, read_depth, uninformative_BAF_threshold, allow100percent = T, reliabilityFile = NA, psi_min_initial = min.ploidy, psi_max_initial = max.ploidy, rho_min_initial = min.rho, rho_max_initial = max.rho, chr.names = chr.names) # kjd 21-2-2014
@@ -209,7 +209,7 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
 #' @author dw9, sd11
 #' @export
 # FIXME this is causing the last error
-callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.file, output.file, output.figures.prefix, output.gw.figures.prefix, chr_names, masking_output_file, max_allowed_state = 250, prior_breakpoints_file = NULL, gamma = 1, segmentation.gamma = NA, siglevel = 0.05, maxdist = 0.01, noperms = 1000, seed = as.integer(Sys.time()), calc_seg_baf_option = 3,plots_directory) {
+callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.file, output.file, output.figures.prefix, output.gw.figures.prefix, chr_names, masking_output_file, max_allowed_state = 250, prior_breakpoints_file = NULL, gamma = 1, segmentation.gamma = NA, siglevel = 0.05, maxdist = 0.01, noperms = 1000, seed = as.integer(Sys.time()), calc_seg_baf_option = 3, plots_directory) {
 
   set.seed(seed)
 
