@@ -9,4 +9,5 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach foreach %dopar%
 #' @importFrom splines ns
+#' @importFrom dplyr %>% filter mutate pull
 NULL

@@ -26,7 +26,11 @@ run_haplotyping(
   beaglenthreads = 1,
   beaglewindow = 40,
   beagleoverlap = 4,
-  javajre = "java"
+  javajre = "java",
+  genomeBuild = "hg38",
+  allele_directory,
+  impute_directory,
+  plots_directory
 )
 }
 \arguments{

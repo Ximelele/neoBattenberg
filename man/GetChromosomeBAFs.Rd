@@ -15,9 +15,7 @@ GetChromosomeBAFs(
 )
 }
 \arguments{
-\item{chrom}{The chromosome number for which this function is called.}
-
-\item{SNP_file}{File containing allele counts for each SNP location.}
+\item{chrom}{The chromosome number for which this function}
 
 \item{haplotypeFile}{File containing impute phasing output.}
 

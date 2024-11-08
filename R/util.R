@@ -1,6 +1,42 @@
 ########################################################################################
 # Generic table reader
 ########################################################################################
+
+# library(dplyr)
+
+# Function to filter and analyze samtools idxstats output
+analyze_idxstats <- function(sample_name) {
+  # Create the samtools command with the passed BAM file
+  command <- paste("samtools idxstats", sample_name, "| sort")
+
+  # Run the samtools command and capture the output
+  output <- system(command, intern = TRUE)
+
+  # Convert the output into a data frame (splitting by tab)
+  df <- read.table(text = output, sep = "\t", skip = 1, header = FALSE, col.names = c("Chromosome", "Length", "Mapped", "Unmapped"))
+
+  # Filter out rows where the Chromosome contains '_' or is 'chrM'
+  filtered_df <- df %>%
+    filter(!grepl("_", Chromosome) & Chromosome != "chrM")
+
+  # Add a new column to calculate Length per Mapped read
+  filtered_df <- filtered_df %>%
+    mutate(Length_per_Read = Mapped / Length)
+
+  # Extract the Length_per_Read for Chromosome X
+  chrX_length_per_read <- filtered_df %>%
+    filter(Chromosome == "chrX") %>%
+    pull(Length_per_Read)
+  avg_length_per_read <- (sum(filtered_df$Length_per_Read, na.rm = TRUE) - chrX_length_per_read) / (nrow(filtered_df) - 1)
+
+  # Compare Chromosome X's Length_per_Read to the average
+  comparison <- chrX_length_per_read - avg_length_per_read
+  message <- ifelse(abs(comparison) < 0.1, TRUE, FALSE)
+
+  return(message)
+}
+
+
 #' Generic reading function using the readr R package, tailored for reading in genomic data
 #' @param file Filename of the file to read in
 #' @param header Whether the file contains a header (Default: TRUE)

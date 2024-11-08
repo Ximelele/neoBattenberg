@@ -17,7 +17,8 @@ getBAFsAndLogRs(
   g1000file.prefix,
   minCounts = NA,
   samplename = "sample1",
-  seed = as.integer(Sys.time())
+  seed = as.integer(Sys.time()),
+  plots_directory
 )
 }
 \arguments{

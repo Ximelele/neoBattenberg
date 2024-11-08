@@ -23,7 +23,8 @@ fit.copy.number(
   preset_rho = NA,
   preset_psi = NA,
   read_depth = 30,
-  analysis = "paired"
+  analysis = "paired",
+  plots_directory
 )
 }
 \arguments{

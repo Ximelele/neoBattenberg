@@ -260,7 +260,7 @@ generate.impute.input.wgs = function(chrom, tumour.allele.counts.file, normal.al
 #' @param recalc_corr_afterwards Set to TRUE to recalculate correlations after correction
 #' @author jdemeul, sd11
 #' @export
-gc.correct.wgs = function(Tumour_LogR_file, outfile, correlations_outfile, gc_content_file_prefix, replic_timing_file_prefix, chrom_names, recalc_corr_afterwards=F) {
+gc.correct.wgs = function(Tumour_LogR_file, outfile, correlations_outfile, gc_content_file_prefix, replic_timing_file_prefix, chrom_names, recalc_corr_afterwards=T) {
 
   if (is.null(gc_content_file_prefix)) {
     stop("GC content reference files must be supplied to WGS GC content correction")

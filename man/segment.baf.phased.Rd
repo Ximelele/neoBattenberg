@@ -14,7 +14,8 @@ segment.baf.phased(
   kmin = 3,
   phasekmin = 3,
   no_segmentation = F,
-  calc_seg_baf_option = 3
+  calc_seg_baf_option = 3,
+  plots_directory
 )
 }
 \arguments{
