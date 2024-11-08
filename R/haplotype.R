@@ -103,8 +103,9 @@ GetChromosomeBAFs = function(chrom, SNP_file, haplotypeFile, samplename, outfile
   write.table(hetMutBAFs, outfile, sep = "\t", row.names = F, col.names = c("Chromosome", "Position", samplename), quote = F)
 }
 
+
 #' Plot haplotyped SNPs
-#' 
+#'
 #' This function takes haplotyped SNPs and plots them to a png file.
 #' @param haplotyped.baf.file File containing the haplotyped SNP info.
 #' @param imageFileName Filename as which the png will be saved.
@@ -113,17 +114,24 @@ GetChromosomeBAFs = function(chrom, SNP_file, haplotypeFile, samplename, outfile
 #' @param chr_names A list of allowed chromosome names.
 #' @author dw9
 #' @export
-plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names) {
+plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names, cytoband_file) {
   mut_data = read.table(haplotyped.baf.file, sep = "\t", header = T)
 
-  if (nrow(mut_data) > 0) {
-    x_min = min(mut_data$Position, na.rm = T)
-    x_max = max(mut_data$Position, na.rm = T)
-  } else {
-    x_min = 1
-    x_max = 2
+  read_cytoband_data <- function(cytoband_file, chromosome) {
+    cyto_data <- read.table(cytoband_file, sep = "\t", header = FALSE, col.names = c("chr", "start", "end", "band", "stain"))
+    cyto_data <- subset(cyto_data, chr == chromosome)
+    return(cyto_data)
   }
 
+  # Read and filter cytoband data for the relevant chromosome
+  cyto_data <- read_cytoband_data(cytoband_file, paste0("chr", chrom))
+
+  # Explicitly set x_min to 0 and use the maximum end of cytoband data for x_max
+  x_min <- 0
+  x_max <- max(cyto_data$end, max(mut_data$Position, na.rm = TRUE))
+
+  # Dynamically calculate point size
+  point.size <- if (nrow(mut_data) > 0) max(0.5, min(3, 1000 / nrow(mut_data))) else 1.5
   haplotype_plot <- create.haplotype.plot(
     chrom.position = mut_data$Position,
     points.blue = mut_data[, 3],
@@ -133,12 +141,14 @@ plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, c
     title = paste("Chromosome", chrom, sep = " "),
     xlab = "pos",
     ylab = "BAF",
-    point.size = 1.5
+    point.size = 1.5,
+    cytoband_data = cyto_data
   )
 
   # Save the plot as a PNG file
   ggsave(filename = imageFileName, plot = haplotype_plot, width = 20, height = 5, dpi = 500)
 }
+
 
 #' Combines all separate BAF files per chromosome into a single file
 #'
