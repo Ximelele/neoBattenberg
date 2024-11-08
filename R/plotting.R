@@ -39,6 +39,7 @@ create.haplotype.plot <- function(chrom.position, points.blue, points.red, x.min
       annotate("text", x = band_start, y = -0.05, label = band_start, angle = 90, vjust = 1, hjust = 0.5, size = 2.5, color = "black") +
       annotate("text", x = band_end, y = -0.05, label = band_end, angle = 90, vjust = 1, hjust = 0.5, size = 2.5, color = "black")
   }
+}
 
 
     #' Function that plots two types of data points against it's chromosomal location.
