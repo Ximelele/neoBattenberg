@@ -27,7 +27,7 @@ create.haplotype.plot <- function(chrom.position, points.blue, points.red, x.min
     )
 
   # Add cytoband regions as vertical lines, horizontal band names, and vertical start and end positions
-  for (i in seq_len(nrow(cytoband_data))) {
+  for (i in 1:nrow(cytoband_data)) {
     band_start <- cytoband_data$start[i]
     band_end <- cytoband_data$end[i]
     band_mid <- (band_start + band_end) / 2
@@ -39,7 +39,10 @@ create.haplotype.plot <- function(chrom.position, points.blue, points.red, x.min
       annotate("text", x = band_start, y = -0.05, label = band_start, angle = 90, vjust = 1, hjust = 0.5, size = 2.5, color = "black") +
       annotate("text", x = band_end, y = -0.05, label = band_end, angle = 90, vjust = 1, hjust = 0.5, size = 2.5, color = "black")
   }
+
+  return(plot)
 }
+
 
 
     #' Function that plots two types of data points against it's chromosomal location.

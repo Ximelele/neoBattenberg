@@ -118,10 +118,8 @@ read_cytoband_data <- function(cytoband_file, chromosome) {
 #' @param chr_names A list of allowed chromosome names.
 #' @author dw9
 #' @export
-plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names, cytoband_file) {
-  mut_data = read.table(haplotyped.baf.file, sep = "\t", header = T)
-
-
+plot.haplotype.data <- function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names, cytoband_file) {
+  mut_data <- read.table(haplotyped.baf.file, sep = "\t", header = TRUE)
 
   # Read and filter cytoband data for the relevant chromosome
   cyto_data <- read_cytoband_data(cytoband_file, paste0("chr", chrom))
@@ -132,6 +130,7 @@ plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, c
 
   # Dynamically calculate point size
   point.size <- if (nrow(mut_data) > 0) max(0.5, min(3, 1000 / nrow(mut_data))) else 1.5
+
   haplotype_plot <- create.haplotype.plot(
     chrom.position = mut_data$Position,
     points.blue = mut_data[, 3],
@@ -141,7 +140,7 @@ plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, c
     title = paste("Chromosome", chrom, sep = " "),
     xlab = "pos",
     ylab = "BAF",
-    point.size = 1.5,
+    point.size = point.size,
     cytoband_data = cyto_data
   )
 
