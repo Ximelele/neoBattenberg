@@ -103,7 +103,11 @@ GetChromosomeBAFs = function(chrom, SNP_file, haplotypeFile, samplename, outfile
   write.table(hetMutBAFs, outfile, sep = "\t", row.names = F, col.names = c("Chromosome", "Position", samplename), quote = F)
 }
 
-
+read_cytoband_data <- function(cytoband_file, chromosome) {
+  cyto_data <- read.table(cytoband_file, sep = "\t", header = FALSE, col.names = c("chr", "start", "end", "band", "stain"))
+  cyto_data <- subset(cyto_data, chr == chromosome)
+  return(cyto_data)
+}
 #' Plot haplotyped SNPs
 #'
 #' This function takes haplotyped SNPs and plots them to a png file.
@@ -117,11 +121,7 @@ GetChromosomeBAFs = function(chrom, SNP_file, haplotypeFile, samplename, outfile
 plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names, cytoband_file) {
   mut_data = read.table(haplotyped.baf.file, sep = "\t", header = T)
 
-  read_cytoband_data <- function(cytoband_file, chromosome) {
-    cyto_data <- read.table(cytoband_file, sep = "\t", header = FALSE, col.names = c("chr", "start", "end", "band", "stain"))
-    cyto_data <- subset(cyto_data, chr == chromosome)
-    return(cyto_data)
-  }
+
 
   # Read and filter cytoband data for the relevant chromosome
   cyto_data <- read_cytoband_data(cytoband_file, paste0("chr", chrom))
