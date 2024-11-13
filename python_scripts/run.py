@@ -1,4 +1,4 @@
-import StrVCTVRE
+import StrVCTVRE_annot
 import AnnotSV
 import threading
 

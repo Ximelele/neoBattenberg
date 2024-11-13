@@ -1,4 +1,4 @@
-from StrVCTVRE import start_analysis
+from StrVCTVRE_annot import start_analysis
 from helper_functions import safe_run
 import os
 def annotate_with_strvctvre(vcf_input: str):

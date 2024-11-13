@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet
 
-from StrVCTVRE import save_plot_to_buffer
+from StrVCTVRE_annot import save_plot_to_buffer
 
 
 def chromosome_with_most_pathogenic_mutations(pathogenic_chromosome):
