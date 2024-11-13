@@ -20,7 +20,9 @@ prepare_wgs(
   min_normal_depth,
   nthreads,
   skip_allele_counting,
-  skip_allele_counting_normal = F
+  skip_allele_counting_normal = F,
+  allele_directory,
+  plots_directory
 )
 }
 \arguments{

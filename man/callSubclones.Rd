@@ -22,7 +22,8 @@ callSubclones(
   maxdist = 0.01,
   noperms = 1000,
   seed = as.integer(Sys.time()),
-  calc_seg_baf_option = 3
+  calc_seg_baf_option = 3,
+  plots_directory
 )
 }
 \arguments{

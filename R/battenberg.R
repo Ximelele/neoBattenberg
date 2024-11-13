@@ -11,7 +11,6 @@
 #' @param gccorrectprefix Full prefix path to GC content files, as part of the Battenberg reference data, not required for SNP6 data (Default: NULL)
 #' @param repliccorrectprefix Full prefix path to replication timing files, as part of the Battenberg reference data, not required for SNP6 data (Default: NULL)
 #' @param g1000allelesprefix Full prefix path to 1000 Genomes SNP alleles data, as part of the Battenberg reference data, not required for SNP6 data (Default: NA)
-#' @param ismale A boolean set to TRUE if the donor is male, set to FALSE if female, not required for SNP6 data (Default: NA)
 #' @param data_type String that contains either wgs or snp6 depending on the supplied input data (Default: wgs)
 #' @param impute_exe Pointer to the Impute2 executable (Default: impute2, i.e. expected in $PATH)
 #' @param allelecounter_exe Pointer to the alleleCounter executable (Default: alleleCounter, i.e. expected in $PATH)
@@ -60,7 +59,7 @@
 #' @author sd11, jdemeul, Naser Ansari-Pour
 #' @export
 battenberg <- function(analysis = "paired", samplename, normalname, sample_data_file, normal_data_file, imputeinfofile, g1000prefix, problemloci, gccorrectprefix = NULL,
-                       repliccorrectprefix = NULL, g1000allelesprefix = NA, ismale = NA, data_type = "wgs", impute_exe = "impute2", allelecounter_exe = "alleleCounter", nthreads = 8, platform_gamma = 1, phasing_gamma = 1,
+                       repliccorrectprefix = NULL, g1000allelesprefix = NA, data_type = "wgs", impute_exe = "impute2", allelecounter_exe = "alleleCounter", nthreads = 8, platform_gamma = 1, phasing_gamma = 1,
                        segmentation_gamma = 10, segmentation_kmin = 3, phasing_kmin = 1, clonality_dist_metric = 0, ascat_dist_metric = 1, min_ploidy = 1.6,
                        max_ploidy = 4.8, min_rho = 0.1, min_goodness = 0.63, uninformative_BAF_threshold = 0.51, min_normal_depth = 10, min_base_qual = 20,
                        min_map_qual = 35, calc_seg_baf_option = 3, skip_allele_counting = F, skip_preprocessing = F, skip_phasing = F, externalhaplotypefile = NA,
@@ -76,11 +75,30 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                        write_battenberg_phasing = T, multisample_relative_weight_balanced = 0.25, multisample_maxlag = 100, segmentation_gamma_multisample = 5,
                        snp6_reference_info_file = NA, apt.probeset.genotype.exe = "apt-probeset-genotype", apt.probeset.summarize.exe = "apt-probeset-summarize",
                        norm.geno.clust.exe = "normalize_affy_geno_cluster.pl", birdseed_report_file = "birdseed.report.txt", heterozygousFilter = "none",
-                       prior_breakpoints_file = NULL, genomebuild = "hg19", chrom_coord_file = NULL) {
+                       prior_breakpoints_file = NULL, genomebuild = "hg38", chrom_coord_file = NULL, allelecounter_directory = "Alle_counts", impute_directory = "Impute", plots_directory = "Plots") {
 
   requireNamespace("foreach")
   requireNamespace("doParallel")
   requireNamespace("parallel")
+  ismale = analyze_idxstats(normal_data_file)
+  print(paste("The patient is", ifelse(ismale, "male", "female")))
+  original_wd <- getwd()
+
+  if (!dir.exists(samplename)) {
+    dir.create(samplename)
+  }
+
+  setwd(paste0(original_wd, "/", samplename))
+
+  if (!dir.exists(allelecounter_directory)) {
+    dir.create(allelecounter_directory)
+  }
+  if (!dir.exists(impute_directory)) {
+    dir.create(impute_directory)
+  }
+  if (!dir.exists(plots_directory)) {
+    dir.create(plots_directory)
+  }
 
   if (analysis == "cell_line") {
     calc_seg_baf_option <- 1
@@ -189,7 +207,9 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                       min_normal_depth = min_normal_depth,
                       nthreads = nthreads,
                       skip_allele_counting = skip_allele_counting[sampleidx],
-                      skip_allele_counting_normal = (sampleidx > 1))
+                      skip_allele_counting_normal = (sampleidx > 1),
+                      allele_directory = allelecounter_directory,
+                      plots_directory = plots_directory)
 
         } else if (analysis == "cell_line") {
           prepare_wgs_cell_line(chrom_names = chrom_names,
@@ -343,7 +363,11 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                           beagleoverlap = beagleoverlap,
                           externalhaplotypeprefix = externalhaplotypeprefix,
                           use_previous_imputation = (sampleidx > 1),
-                          genomeBuild = genomebuild)
+                          genomeBuild = genomebuild,
+                          allele_directory = allelecounter_directory,
+                          impute_directory = impute_directory,
+                          plots_directory = plots_directory
+          )
         }
       }
 
@@ -351,29 +375,30 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
       parallel::stopCluster(clp)
 
       # Combine all the BAF output into a single file
-      combine.baf.files(inputfile.prefix = paste0(samplename[sampleidx], "_chr"),
+      combine.baf.files(inputfile.prefix = paste0(impute_directory, "/", samplename[sampleidx], "_chr"),
                         inputfile.postfix = "_heterozygousMutBAFs_haplotyped.txt",
-                        outputfile = paste0(samplename[sampleidx], "_heterozygousMutBAFs_haplotyped.txt"),
+                        outputfile = paste0(impute_directory, "/", samplename[sampleidx], "_heterozygousMutBAFs_haplotyped.txt"),
                         chr_names = chrom_names)
     }
 
     # Segment the phased and haplotyped BAF data
     segment.baf.phased(samplename = samplename[sampleidx],
-                       inputfile = paste0(samplename[sampleidx], "_heterozygousMutBAFs_haplotyped.txt"),
-                       outputfile = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                       inputfile = paste0(impute_directory, "/", samplename[sampleidx], "_heterozygousMutBAFs_haplotyped.txt"),
+                       outputfile = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                        prior_breakpoints_file = prior_breakpoints_file,
                        gamma = segmentation_gamma,
                        phasegamma = phasing_gamma,
                        kmin = segmentation_kmin,
                        phasekmin = phasing_kmin,
-                       calc_seg_baf_option = calc_seg_baf_option)
+                       calc_seg_baf_option = calc_seg_baf_option,
+                       plots_directory = plots_directory)
 
     if (nsamples > 1 | write_battenberg_phasing) {
       # Write the Battenberg phasing information to disk as a vcf
       write_battenberg_phasing(tumourname = samplename[sampleidx],
-                               SNPfiles = paste0(samplename[sampleidx], "_alleleFrequencies_chr", chrom_names, ".txt"),
-                               imputedHaplotypeFiles = paste0(samplename[sampleidx], "_impute_output_chr", chrom_names, "_allHaplotypeInfo.txt"),
-                               bafsegmented_file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                               SNPfiles = paste0(allelecounter_directory, "/", samplename[sampleidx], "_alleleFrequencies_chr", chrom_names, ".txt"),
+                               imputedHaplotypeFiles = paste0(impute_directory, "/", samplename[sampleidx], "_impute_output_chr", chrom_names, "_allHaplotypeInfo.txt"),
+                               bafsegmented_file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                                outprefix = paste0(samplename[sampleidx], "_Battenberg_phased_chr"),
                                chrom_names = chrom_names,
                                include_homozygous = F)
@@ -486,7 +511,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     if (data_type == "wgs" | data_type == "WGS") {
       logr_file <- paste0(samplename[sampleidx], "_mutantLogR_gcCorrected.tab")
       if (analysis == "paired") {
-        allelecounts_file <- paste0(samplename[sampleidx], "_alleleCounts.tab")
+        allelecounts_file <- paste0(allelecounter_directory, "/", samplename[sampleidx], "_alleleCounts.tab")
       } else {
         # Not produced by a number of analysis and is required for some plots. Setting to NULL  makes the pipeline not attempt to create these plots
         allelecounts_file <- NULL
@@ -496,7 +521,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     # Fit a clonal copy number profile
     fit.copy.number(samplename = samplename[sampleidx],
                     outputfile.prefix = paste0(samplename[sampleidx], "_"),
-                    inputfile.baf.segmented = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                    inputfile.baf.segmented = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                     inputfile.baf = paste0(samplename[sampleidx], "_mutantBAF.tab"),
                     inputfile.logr = logr_file,
                     dist_choice = clonality_dist_metric,
@@ -511,16 +536,17 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                     preset_rho = NA,
                     preset_psi = NA,
                     read_depth = 30,
-                    analysis = analysis)
+                    analysis = analysis,
+                    plots_directory = plots_directory)
 
     # Go over all segments, determine which segements are a mixture of two states and fit a second CN state
     callSubclones(sample.name = samplename[sampleidx],
-                  baf.segmented.file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                  baf.segmented.file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                   logr.file = logr_file,
                   rho.psi.file = paste0(samplename[sampleidx], "_rho_and_psi.txt"),
                   output.file = paste0(samplename[sampleidx], "_copynumber.txt"),
-                  output.figures.prefix = paste0(samplename[sampleidx], "_subclones_chr"),
-                  output.gw.figures.prefix = paste0(samplename[sampleidx], "_BattenbergProfile"),
+                  output.figures.prefix = paste0(plots_directory, '/', samplename[sampleidx], "_subclones_chr"),
+                  output.gw.figures.prefix = paste0(plots_directory, '/', samplename[sampleidx], "_BattenbergProfile"),
                   masking_output_file = paste0(samplename[sampleidx], "_segment_masking_details.txt"),
                   prior_breakpoints_file = prior_breakpoints_file,
                   chr_names = chrom_names,
@@ -545,7 +571,7 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
     # Make some post-hoc plots
     make_posthoc_plots(samplename = samplename[sampleidx],
                        logr_file = logr_file,
-                       bafsegmented_file = paste0(samplename[sampleidx], ".BAFsegmented.txt"),
+                       bafsegmented_file = paste0(impute_directory, "/", samplename[sampleidx], ".BAFsegmented.txt"),
                        logrsegmented_file = paste0(samplename[sampleidx], ".logRsegmented.txt"),
                        allelecounts_file = allelecounts_file)
 
@@ -567,4 +593,6 @@ battenberg <- function(analysis = "paired", samplename, normalname, sample_data_
                           tumournames = samplename,
                           plotting = T)
   }
+  #set original wd
+  setwd(original_wd)
 }

@@ -4,7 +4,7 @@
 \alias{writevcf.beagle}
 \title{Writes input file for beagle5}
 \usage{
-writevcf.beagle(vcf, filepath, vcfversion = "4.2", genomereference = "GRCh37")
+writevcf.beagle(vcf, filepath, vcfversion = "4.2", genomereference = "GRCh38")
 }
 \arguments{
 \item{vcf}{data frame vcf-like for beagle}
