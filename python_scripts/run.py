@@ -1,6 +1,3 @@
-import argparse
-from turtledemo.penrose import start
-
 import StrVCTVRE
 import AnnotSV
 import threading
@@ -40,6 +37,7 @@ def main():
     for thread in threads:
         thread.join()
     print("Finnished")
+
 
 if __name__ == "__main__":
     main()
